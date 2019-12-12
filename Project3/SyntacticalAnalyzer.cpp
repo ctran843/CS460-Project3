@@ -212,7 +212,7 @@ int SyntacticalAnalyzer::define ()
 			token = lex->GetToken();
 		}
 	}
-	cgen->WriteCode(0, "\n{\n Object __RetVal;\n");
+	cgen->WriteCode(0, "\n{\nObject __RetVal;\n");
 
 
 	errors += stmt();
@@ -236,9 +236,9 @@ int SyntacticalAnalyzer::define ()
 		token = lex->GetToken();
 	}
 	if(isMain){
-		cgen->WriteCode(0, "return 0;\n}");
+		cgen->WriteCode(0, "return 0;\n}\n");
 	}else{
-		cgen->WriteCode(0, "\n return __RetVal;\n}");
+		cgen->WriteCode(0, "\n return __RetVal;\n}\n");
 	}
 	return errors;
 }
@@ -286,6 +286,7 @@ int SyntacticalAnalyzer::stmt_list ()
 		else if(token_type(token) == NUMLIT_T || token_type(token) == STRLIT_T || token_type(token) == SQUOTE_T){
 			p2_file<<"Using rule 7.\n";
 			errors += literal();
+			cgen->WriteCode(0, ";\n");
 		}
 		errors+=stmt_list();
 	}
@@ -335,6 +336,7 @@ int SyntacticalAnalyzer::stmt ()
 	else if(token_type(token) == NUMLIT_T || token_type(token) == STRLIT_T || token_type(token) == SQUOTE_T){
 		p2_file<<"Using rule 7.\n";
 		errors += literal();
+		cgen->WriteCode(0, ";\n");
 	}
 
 	return errors;
@@ -350,6 +352,7 @@ int SyntacticalAnalyzer::literal ()
 	set<token_type> firsts = {NUMLIT_T, STRLIT_T,  SQUOTE_T};
 	set<token_type>follows={RPAREN_T, IDENT_T, LPAREN_T, NUMLIT_T, STRLIT_T, SQUOTE_T, LAMBDA};
 	if(token_type(token) == NUMLIT_T){
+		cgen->WriteCode(0,"Object(" + lex->GetLexeme() +")");
 		p2_file<<"Using rule 10.\n";
 	}
 	else if(token_type(token) == STRLIT_T){
@@ -477,6 +480,7 @@ int SyntacticalAnalyzer::else_part ()
 		else if(token_type(token) == NUMLIT_T || token_type(token) == STRLIT_T || token_type(token) == SQUOTE_T){
 			p2_file<<"Using rule 7.\n";
 			errors += literal();
+			cgen->WriteCode(0, ";\n");
 		}
 		errors+=stmt_list();
 
@@ -745,7 +749,10 @@ int SyntacticalAnalyzer::action ()
 			errors+= stmt();
 		}
 
-		else if (token_type(token) == NEWLINE_T){	p2_file<<"Using rule 49.\n";	}
+		else if (token_type(token) == NEWLINE_T){
+			cgen->WriteCode(0, "cout << endl;\n");
+			p2_file<<"Using rule 49.\n";
+		}
 
 		return errors;
 }
