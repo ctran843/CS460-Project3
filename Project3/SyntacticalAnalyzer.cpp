@@ -285,8 +285,16 @@ int SyntacticalAnalyzer::stmt_list ()
 
 		else if(token_type(token) == NUMLIT_T || token_type(token) == STRLIT_T || token_type(token) == SQUOTE_T){
 			p2_file<<"Using rule 7.\n";
+			bool isSTRLIT = false;
+			if (token_type(token) == STRLIT_T)
+				isSTRLIT = true;
+			if (isSTRLIT)
+				cgen->WriteCode(0, "\"");
 			errors += literal();
+			if (isSTRLIT)
+				cgen->WriteCode(0, "\"");
 			cgen->WriteCode(0, ";\n");
+			isSTRLIT = false;
 		}
 		errors+=stmt_list();
 	}
@@ -335,8 +343,16 @@ int SyntacticalAnalyzer::stmt ()
 	}
 	else if(token_type(token) == NUMLIT_T || token_type(token) == STRLIT_T || token_type(token) == SQUOTE_T){
 		p2_file<<"Using rule 7.\n";
+		bool isSTRLIT = false;
+		if (token_type(token) == STRLIT_T)
+			isSTRLIT = true;
+		if (isSTRLIT)
+			cgen->WriteCode(0, "\"");
 		errors += literal();
+		if (isSTRLIT)
+			cgen->WriteCode(0, "\"");
 		cgen->WriteCode(0, ";\n");
+		isSTRLIT = false;
 	}
 
 	return errors;
@@ -479,8 +495,16 @@ int SyntacticalAnalyzer::else_part ()
 		}
 		else if(token_type(token) == NUMLIT_T || token_type(token) == STRLIT_T || token_type(token) == SQUOTE_T){
 			p2_file<<"Using rule 7.\n";
+			bool isSTRLIT = false;
+			if (token_type(token) == STRLIT_T)
+				isSTRLIT = true;
+			if (isSTRLIT)
+				cgen->WriteCode(0, "\"");
 			errors += literal();
+			if (isSTRLIT)
+				cgen->WriteCode(0, "\"");
 			cgen->WriteCode(0, ";\n");
+			isSTRLIT = false;
 		}
 		errors+=stmt_list();
 
@@ -787,6 +811,7 @@ int SyntacticalAnalyzer::any_other_token ()
 
 	}else if (token_type(token) == IDENT_T){
 		p2_file << "Using rule 51.\n";
+		cgen->WriteCode(0, "Object(\"" + lex->GetLexeme() + "\")");
 		token = lex->GetToken();
 	}else if (token_type(token) == NUMLIT_T){
 		p2_file << "Using rule 52.\n";
