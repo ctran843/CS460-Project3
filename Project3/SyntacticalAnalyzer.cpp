@@ -444,9 +444,11 @@ int SyntacticalAnalyzer::more_tokens ()
 				   STRLIT_T, SQUOTE_T};
 
 	while (firsts.find(token) == firsts.end()){
-            errors++;
-            token = lex->GetToken();
-        }
+        errors++;
+        if (token_type(token) == EOF_T)
+        	return errors;
+        token = lex->GetToken();
+    }
 
 	if (token_type(token) == RPAREN_T)
 	{
