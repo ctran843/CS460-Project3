@@ -856,12 +856,10 @@ int SyntacticalAnalyzer::any_other_token ()
 
 	if(token_type(token) == LPAREN_T){
 		p2_file << "Using rule 50.\n";
-		cgen->WriteCode(0, "(");
 		token = lex->GetToken();
 		//go to more_tokens check
 		errors += more_tokens();
 		if(token_type(token) == RPAREN_T){
-			cgen->WriteCode(0, ")");
 			token = lex->GetToken();
 		}else{
 			errors++;
