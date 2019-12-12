@@ -395,10 +395,10 @@ int SyntacticalAnalyzer::literal ()
 		p2_file<<"Using rule 11.\n";
 	}
 	else{
-		cgen->WriteCode(0, "Object(\"(");
+		cgen->WriteCode(0, "Object(\"");
 		p2_file<<"Using rule 12.\n";
 		errors += quoted_lit();
-		cgen->WriteCode(0, ")\")");
+		cgen->WriteCode(0, "\")");
 	}
 
 	return errors;
@@ -457,6 +457,7 @@ int SyntacticalAnalyzer::more_tokens ()
         errors++;
         if (token_type(token) == EOF_T)
         	return errors;
+	cout << token;
         token = lex->GetToken();
     }
 
@@ -857,11 +858,13 @@ int SyntacticalAnalyzer::any_other_token ()
 	}
 
 	if(token_type(token) == LPAREN_T){
+		cgen->WriteCode(0, "(");
 		p2_file << "Using rule 50.\n";
 		token = lex->GetToken();
 		//go to more_tokens check
 		errors += more_tokens();
 		if(token_type(token) == RPAREN_T){
+			cgen->WriteCode(0, ")");
 			token = lex->GetToken();
 		}else{
 			errors++;
@@ -928,6 +931,7 @@ int SyntacticalAnalyzer::any_other_token ()
 		token = lex->GetToken();
 
 	}else if (token_type(token) == NUMBERP_T){
+		cout << token << " is a number";
 		p2_file << "Using rule 63.\n";
 		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
