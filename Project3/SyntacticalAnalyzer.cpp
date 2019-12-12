@@ -284,6 +284,7 @@ int SyntacticalAnalyzer::stmt_list ()
 		}
 
 		else if(token_type(token) == NUMLIT_T || token_type(token) == STRLIT_T || token_type(token) == SQUOTE_T){
+			cgen->WriteCode(0, "__RetVal = ");
 			p2_file<<"Using rule 7.\n";
 			errors += literal();
 		}
@@ -333,6 +334,7 @@ int SyntacticalAnalyzer::stmt ()
 		}
 	}
 	else if(token_type(token) == NUMLIT_T || token_type(token) == STRLIT_T || token_type(token) == SQUOTE_T){
+		cgen->WriteCode(0, "__RetVal = ");
 		p2_file<<"Using rule 7.\n";
 		errors += literal();
 	}
@@ -356,8 +358,10 @@ int SyntacticalAnalyzer::literal ()
 		p2_file<<"Using rule 11.\n";
 	}
 	else{
+		cgen->WriteCode(0, "Object(\"(");
 		p2_file<<"Using rule 12.\n";
 		errors += quoted_lit();
+		cgen->WriteCode(0, ")\")");
 	}
 
 	return errors;
@@ -382,7 +386,6 @@ int SyntacticalAnalyzer::quoted_lit ()
 	    errors++;
 	    token = lex->GetToken();
 	}
-
 	p2_file<<"Using rule 13.\n";
 	errors += any_other_token();
 
@@ -416,7 +419,7 @@ int SyntacticalAnalyzer::more_tokens ()
 	else
 	{
 	    p2_file<<"Using rule 14.\n";
-
+		cgen->WriteCode(0, " ");
 	    errors += any_other_token();
 
 	    errors += more_tokens();
@@ -458,6 +461,9 @@ int SyntacticalAnalyzer::else_part ()
 		p2_file << "Using rule 18.\n";
 		// don't want to get next token because token is already at the first of stmt token = lex->GetToken();
 		if(token_type(token) == IDENT_T){
+			cgen->WriteCode(0, "__RetVal = ");
+			cgen->WriteCode(0, lex->GetLexeme());
+			cgen->WriteCode(0, ";");
 			p2_file<<"Using rule 8.\n";
 		}
 		else if(token_type(token) == LPAREN_T){
@@ -475,6 +481,7 @@ int SyntacticalAnalyzer::else_part ()
 			}
 		}
 		else if(token_type(token) == NUMLIT_T || token_type(token) == STRLIT_T || token_type(token) == SQUOTE_T){
+			cgen->WriteCode(0, "__RetVal = ");
 			p2_file<<"Using rule 7.\n";
 			errors += literal();
 		}
@@ -491,6 +498,7 @@ int SyntacticalAnalyzer::else_part ()
 
 int SyntacticalAnalyzer::stmt_pair ()
 {
+	cout << "stmt_pair" << endl;
 	int errors = 0;
 	set<token_type> firsts = {LPAREN_T, RPAREN_T};
 	set<token_type> follows = {RPAREN_T};
@@ -521,6 +529,7 @@ int SyntacticalAnalyzer::stmt_pair ()
 
 int SyntacticalAnalyzer::stmt_pair_body ()
 {
+	cout << "stmt pair body" << endl;
 	int errors = 0;
 	set<token_type> firsts = {ELSE_T, IDENT_T, LPAREN_T, NUMLIT_T, STRLIT_T, SQUOTE_T};
 	set<token_type> follows = {RPAREN_T};
@@ -562,6 +571,7 @@ int SyntacticalAnalyzer::stmt_pair_body ()
 
 int SyntacticalAnalyzer::action ()
 {
+	cout << "action" << endl;
 	int errors = 0;
 	token = lex->GetToken();
 	set<token_type> firsts = {IF_T, COND_T, LISTOP1_T, LISTOP2_T,
@@ -610,14 +620,23 @@ int SyntacticalAnalyzer::action ()
 		{
 			cout << lex->GetLexeme();
 			p2_file<<"Using rule 26.\n";
-		//	errors+= stmt();
+			cgen->WriteCode(0, "listop (");
+			cgen->WriteCode(0, "\"");
+			cgen->WriteCode(0, lex->GetLexeme());
+			cgen->WriteCode(0, "\", ");
+			errors+= stmt();
+			cgen->WriteCode(0, ")");
 		}
 
 		else if (token_type(token) == LISTOP2_T)
 		{
+			cgen->WriteCode(0, "__RetVal = cons (");
 			p2_file<<"Using rule 27.\n";
 			errors+= stmt();
+			cgen->WriteCode(0, ",\n");
+			cgen->WriteCode(1, "");
 			errors+= stmt();
+			cgen->WriteCode(0, ")");
 		}
 
 		else if (token_type(token) == AND_T)
@@ -752,6 +771,7 @@ int SyntacticalAnalyzer::action ()
 
 int SyntacticalAnalyzer::any_other_token ()
 {
+	cout << "any_other_token" << endl;
 	int errors = 0;
 	set<token_type> firsts = {LPAREN_T, IDENT_T, NUMLIT_T, STRLIT_T, LISTOP2_T, IF_T, DISPLAY_T, NEWLINE_T, LISTOP1_T, AND_T, OR_T, NOT_T, DEFINE_T, NUMBERP_T, LISTP_T, ZEROP_T, NULLP_T, STRINGP_T, PLUS_T, MINUS_T, DIV_T, MULT_T, MODULO_T, ROUND_T, EQUALTO_T, GT_T, LT_T, GTE_T, LTE_T, SQUOTE_T, COND_T, ELSE_T};
 	set<token_type> follows = {LPAREN_T, IDENT_T, NUMLIT_T, STRLIT_T, LISTOP2_T, IF_T, DISPLAY_T, NEWLINE_T, LISTOP1_T, AND_T, OR_T, NOT_T, DEFINE_T, NUMBERP_T, LISTP_T, ZEROP_T, NULLP_T, STRINGP_T, PLUS_T, MINUS_T, DIV_T, MULT_T, MODULO_T, ROUND_T, EQUALTO_T, GT_T, LT_T, SQUOTE_T, COND_T,
@@ -768,10 +788,12 @@ int SyntacticalAnalyzer::any_other_token ()
 
 	if(token_type(token) == LPAREN_T){
 		p2_file << "Using rule 50.\n";
+		cgen->WriteCode(0, "(");
 		token = lex->GetToken();
 		//go to more_tokens check
 		errors += more_tokens();
 		if(token_type(token) == RPAREN_T){
+			cgen->WriteCode(0, ")");
 			token = lex->GetToken();
 		}else{
 			errors++;
@@ -780,123 +802,154 @@ int SyntacticalAnalyzer::any_other_token ()
 
 	}else if (token_type(token) == IDENT_T){
 		p2_file << "Using rule 51.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 	}else if (token_type(token) == NUMLIT_T){
 		p2_file << "Using rule 52.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 	}else if (token_type(token) == STRLIT_T){
 		p2_file << "Using rule 53.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == LISTOP2_T){
 		p2_file << "Using rule 54.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == IF_T){
 		p2_file << "Using rule 55.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == DISPLAY_T){
 		p2_file << "Using rule 56.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == NEWLINE_T){
 		p2_file << "Using rule 57.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == LISTOP1_T){
 		cout << lex->GetLexeme();
+		cgen->WriteCode(0, lex->GetLexeme());
 		p2_file << "Using rule 58.\n";
 		token = lex->GetToken();
 
 	}else if (token_type(token) == AND_T){
 		p2_file << "Using rule 59.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == OR_T){
 		p2_file << "Using rule 60.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == NOT_T){
 		p2_file << "Using rule 61.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == DEFINE_T){
 		p2_file << "Using rule 62.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == NUMBERP_T){
 		p2_file << "Using rule 63.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == LISTP_T){
 		p2_file << "Using rule 64.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 	}else if (token_type(token) == ZEROP_T){
 		p2_file << "Using rule 65.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == NULLP_T){
 		p2_file << "Using rule 66.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == STRINGP_T){
 		p2_file << "Using rule 67.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == PLUS_T){
 		p2_file << "Using rule 68.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == MINUS_T){
 		p2_file << "Using rule 69.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == DIV_T){
 		p2_file << "Using rule 70.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == MULT_T){
 		p2_file << "Using rule 71.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == MODULO_T){
 		p2_file << "Using rule 72.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == ROUND_T){
 		p2_file << "Using rule 73.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == EQUALTO_T){
 		p2_file << "Using rule 74.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == GT_T){
 		p2_file << "Using rule 75.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == LT_T){
 		p2_file << "Using rule 76.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == GTE_T){
 		p2_file << "Using rule 77.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == LTE_T){
 		p2_file << "Using rule 78.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 
 	}else if (token_type(token) == SQUOTE_T){
 		p2_file << "Using rule 79.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 		errors += any_other_token();
 	}else if (token_type(token) == COND_T){
 		p2_file << "Using rule 80.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 	}else if (token_type(token) == ELSE_T){
 		p2_file << "Using rule 81.\n";
+		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 	}else{
 		errors++;

@@ -1,0 +1,4 @@
+Input file: input2.ss
+   1: (define (listop_ex1)
+   2:   (cons (car '(a b c)) (cdr '(d e f)))
+   3:   )
