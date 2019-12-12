@@ -35,6 +35,7 @@ SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
 SyntacticalAnalyzer::~SyntacticalAnalyzer ()
 {
 	delete lex;
+	delete cgen;
 }
 
 int SyntacticalAnalyzer::program ()
@@ -185,7 +186,15 @@ int SyntacticalAnalyzer::define ()
 		lex->ReportError("IDENT_T Expected. "+lex->GetTokenName(token)+" found instead.\n");
 		token = lex->GetToken();
 	}
-
+	bool isMain = 0;
+	if(lex->GetLexeme() == "main"){
+		cgen->WriteCode(0, "int main (");
+		isMain = 1;
+	}else{	
+		cgen->WriteCode(0,"Object ");
+		cgen->WriteCode(0, lex->GetLexeme());
+		cgen->WriteCode(0, " (");
+	}
 	//param_list needs to start with GetToken() so the same IDENT_T isn't counted
 	//twice
 	errors += param_list();
@@ -203,7 +212,7 @@ int SyntacticalAnalyzer::define ()
 			token = lex->GetToken();
 		}
 	}
-
+	cgen->WriteCode(0, "\n{\n Object __RetVal;\n");
 
 
 	errors += stmt();
@@ -226,7 +235,11 @@ int SyntacticalAnalyzer::define ()
 		lex->ReportError("RPAREN_T Expected. "+lex->GetTokenName(token)+" found instead.\n");
 		token = lex->GetToken();
 	}
-
+	if(isMain){
+		cgen->WriteCode(0, "return 0;\n}");
+	}else{
+		cgen->WriteCode(0, "\n return __RetVal;\n}");
+	}
 	return errors;
 }
 
@@ -422,10 +435,12 @@ int SyntacticalAnalyzer::param_list ()
 	if (token_type(token) == IDENT_T)
 	{
 	    p2_file<<"Using rule 16.\n";
+	    cgen->WriteCode(0, lex->GetLexeme());
 			errors += param_list();
 	}
 	else
 	{
+		cgen->WriteCode(0, ")");
 	    p2_file<<"Using rule 17.\n";
 	}
 
