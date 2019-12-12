@@ -40,9 +40,11 @@ SyntacticalAnalyzer::~SyntacticalAnalyzer ()
 
 int SyntacticalAnalyzer::program ()
 {
+	cout << "in program" << endl;
+
 	int errors = 0;
 	set<token_type> firsts = {LPAREN_T};
-  set<token_type>follows={};
+  	set<token_type>follows={};
 
 	token = lex->GetToken();
 	while(token_type(token) != LPAREN_T){
@@ -99,24 +101,26 @@ int SyntacticalAnalyzer::program ()
 //be RPAREN_T is everything went well, otherwise will be EOF_T.
 int SyntacticalAnalyzer::more_defines()
 {
+	cout << "in more_defines" << endl;
+
 
 	int errors = 0;
 	set<token_type> firsts = {IDENT_T, DEFINE_T};
-  set<token_type>follows={EOF_T};
+  	set<token_type>follows={EOF_T};
 
 	token = lex->GetToken();
 	while(firsts.find(token_type(token)) == firsts.end()){
-    errors++;
-    token = lex->GetToken();
+	    errors++;
+	    token = lex->GetToken();
 		if(token_type(token) == EOF_T){
 			lex->ReportError("EOF_T reached before IDENT_T or DEFINE_T found in more_defines().\n");
 			return errors;
 		}
-  }
+  	}
 
   if(token_type(token)==DEFINE_T){
-    p2_file<<"Using rule 2.\n";
-    errors += define();
+	    p2_file<<"Using rule 2.\n";
+	    errors += define();
 		token = lex->GetToken();
 		while(token_type(token) != LPAREN_T){
 			if(token_type(token)== EOF_T){
@@ -128,7 +132,7 @@ int SyntacticalAnalyzer::more_defines()
 			lex->ReportError("LPAREN_T Expected. "+lex->GetTokenName(token)+" found instead.\n");
 			token = lex->GetToken();
 		}
-    errors += more_defines();
+	    errors += more_defines();
 	}
 
   else if(token_type(token)==IDENT_T){
@@ -155,6 +159,8 @@ int SyntacticalAnalyzer::more_defines()
 //Function only called if a DEFINE_T is found
 int SyntacticalAnalyzer::define ()
 {
+	cout << "in define" << endl;
+
 	p2_file<<"Using rule 4.\n";
 	set<token_type> firsts = {DEFINE_T};
   	set<token_type>follows={LPAREN_T};
@@ -247,6 +253,8 @@ int SyntacticalAnalyzer::define ()
 //necessary because of the inevitability of an empty list to end the chain
 int SyntacticalAnalyzer::stmt_list ()
 {
+	cout << "in stmt_list" << endl;
+
 	int errors = 0;
 	set<token_type> firsts = {IDENT_T, LPAREN_T, NUMLIT_T, STRLIT_T, SQUOTE_T};
 	token=lex->GetToken();
@@ -307,6 +315,8 @@ int SyntacticalAnalyzer::stmt_list ()
 //Token not advanced into next nonterminal after this function
 int SyntacticalAnalyzer::stmt ()
 {
+	cout << "in stmt" << endl;
+
 	int errors = 0;
 	token = lex->GetToken();
 	set<token_type> firsts = {IDENT_T, LPAREN_T, NUMLIT_T, STRLIT_T, SQUOTE_T};
@@ -363,6 +373,8 @@ int SyntacticalAnalyzer::stmt ()
 //check it's value or get new tokens.
 int SyntacticalAnalyzer::literal ()
 {
+	cout << "in literal" << endl;
+
 	//special case where we don't grab a new token at the beginning.
 	int errors = 0;
 	set<token_type> firsts = {NUMLIT_T, STRLIT_T,  SQUOTE_T};
@@ -389,6 +401,8 @@ int SyntacticalAnalyzer::literal ()
 
 int SyntacticalAnalyzer::quoted_lit ()
 {
+	cout << "in quoted_lit" << endl;
+
 	int errors = 0;
 
 	set<token_type> firsts = {LPAREN_T, IDENT_T, NUMLIT_T, STRLIT_T,
@@ -415,6 +429,8 @@ int SyntacticalAnalyzer::quoted_lit ()
 
 int SyntacticalAnalyzer::more_tokens ()
 {
+	cout << "in more_tokens" << endl;
+
 	int errors = 0;
 
 	set<token_type> firsts = {IF_T, COND_T, LISTOP1_T, LISTOP2_T,
@@ -451,6 +467,8 @@ int SyntacticalAnalyzer::more_tokens ()
 
 int SyntacticalAnalyzer::param_list ()
 {
+	cout << "in param_list" << endl;
+
 	int errors = 0;
 	set<token_type> firsts = {IDENT_T, RPAREN_T};
   	set<token_type> follows = {RPAREN_T};
@@ -477,6 +495,8 @@ int SyntacticalAnalyzer::param_list ()
 
 int SyntacticalAnalyzer::else_part ()
 {
+	cout << "in else_part" << endl;
+
 	int errors = 0;
 	token = lex->GetToken();
 	set<token_type> firsts = {IDENT_T, LPAREN_T, NUMLIT_T, STRLIT_T, SQUOTE_T, RPAREN_T};
@@ -532,13 +552,15 @@ int SyntacticalAnalyzer::else_part ()
 
 int SyntacticalAnalyzer::stmt_pair ()
 {
+	cout << "in stmt_pair" << endl;
+
 	int errors = 0;
 	set<token_type> firsts = {LPAREN_T, RPAREN_T};
 	set<token_type> follows = {RPAREN_T};
 
 	while(firsts.find(token_type(token)) == firsts.end()){
-    errors++;
-    token = lex->GetToken();
+	    errors++;
+	    token = lex->GetToken();
 		if(token_type(token) == EOF_T){
 			lex->ReportError("EOF_T reached before LPAREN_T or RPAREN_T found in stmt_pair().\n");
 			return errors;
@@ -562,6 +584,8 @@ int SyntacticalAnalyzer::stmt_pair ()
 
 int SyntacticalAnalyzer::stmt_pair_body ()
 {
+	cout << "in stmt_pair_body" << endl;
+
 	int errors = 0;
 	set<token_type> firsts = {ELSE_T, IDENT_T, LPAREN_T, NUMLIT_T, STRLIT_T, SQUOTE_T};
 	set<token_type> follows = {RPAREN_T};
@@ -603,6 +627,8 @@ int SyntacticalAnalyzer::stmt_pair_body ()
 
 int SyntacticalAnalyzer::action ()
 {
+	cout << "in action" << endl;
+
 	int errors = 0;
 	token = lex->GetToken();
 	set<token_type> firsts = {IF_T, COND_T, LISTOP1_T, LISTOP2_T,
@@ -796,6 +822,8 @@ int SyntacticalAnalyzer::action ()
 
 int SyntacticalAnalyzer::any_other_token ()
 {
+	cout << "in any_other_token" << endl;
+
 	int errors = 0;
 	set<token_type> firsts = {LPAREN_T, IDENT_T, NUMLIT_T, STRLIT_T, LISTOP2_T, IF_T, DISPLAY_T, NEWLINE_T, LISTOP1_T, AND_T, OR_T, NOT_T, DEFINE_T, NUMBERP_T, LISTP_T, ZEROP_T, NULLP_T, STRINGP_T, PLUS_T, MINUS_T, DIV_T, MULT_T, MODULO_T, ROUND_T, EQUALTO_T, GT_T, LT_T, GTE_T, LTE_T, SQUOTE_T, COND_T, ELSE_T};
 	set<token_type> follows = {LPAREN_T, IDENT_T, NUMLIT_T, STRLIT_T, LISTOP2_T, IF_T, DISPLAY_T, NEWLINE_T, LISTOP1_T, AND_T, OR_T, NOT_T, DEFINE_T, NUMBERP_T, LISTP_T, ZEROP_T, NULLP_T, STRINGP_T, PLUS_T, MINUS_T, DIV_T, MULT_T, MODULO_T, ROUND_T, EQUALTO_T, GT_T, LT_T, SQUOTE_T, COND_T,
