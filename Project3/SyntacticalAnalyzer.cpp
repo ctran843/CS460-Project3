@@ -294,16 +294,16 @@ int SyntacticalAnalyzer::stmt_list ()
 		else if(token_type(token) == NUMLIT_T || token_type(token) == STRLIT_T || token_type(token) == SQUOTE_T){
 			cgen->WriteCode(0, "__RetVal = ");
 			p2_file<<"Using rule 7.\n";
-			bool isSTRLIT = false;
-			if (token_type(token) == STRLIT_T)
-				isSTRLIT = true;
-			if (isSTRLIT)
+			bool isSQUOTE = false;
+			if (token_type(token) == SQUOTE_T)
+				isSQUOTE = true;
+			if (isSQUOTE)
 				cgen->WriteCode(0, "\"");
 			errors += literal();
-			if (isSTRLIT)
+			if (isSQUOTE)
 				cgen->WriteCode(0, "\"");
 			cgen->WriteCode(0, ";\n");
-			isSTRLIT = false;
+			isSQUOTE = false;
 		}
 		errors+=stmt_list();
 	}
@@ -355,16 +355,16 @@ int SyntacticalAnalyzer::stmt ()
 	else if(token_type(token) == NUMLIT_T || token_type(token) == STRLIT_T || token_type(token) == SQUOTE_T){
 		//cgen->WriteCode(0, "__RetVal = ");
 		p2_file<<"Using rule 7.\n";
-		bool isSTRLIT = false;
-		if (token_type(token) == STRLIT_T)
-			isSTRLIT = true;
-		if (isSTRLIT)
+		bool isSQUOTE = false;
+		if (token_type(token) == SQUOTE_T)
+			isSQUOTE = true;
+		if (isSQUOTE)
 			cgen->WriteCode(0, "\"");
 		errors += literal();
-		if (isSTRLIT)
+		if (isSQUOTE)
 			cgen->WriteCode(0, "\"");
 		cgen->WriteCode(0, ";\n");
-		isSTRLIT = false;
+		isSQUOTE = false;
 	}
 
 	return errors;
@@ -391,6 +391,7 @@ int SyntacticalAnalyzer::literal ()
 		p2_file<<"Using rule 10.\n";
 	}
 	else if(token_type(token) == STRLIT_T){
+		cgen->WriteCode(0, "Object(" + lex->GetLexeme() + ")");
 		p2_file<<"Using rule 11.\n";
 	}
 	else{
@@ -536,16 +537,16 @@ int SyntacticalAnalyzer::else_part ()
 		else if(token_type(token) == NUMLIT_T || token_type(token) == STRLIT_T || token_type(token) == SQUOTE_T){
 			cgen->WriteCode(0, "__RetVal = ");
 			p2_file<<"Using rule 7.\n";
-			bool isSTRLIT = false;
-			if (token_type(token) == STRLIT_T)
-				isSTRLIT = true;
-			if (isSTRLIT)
+			bool isSQUOTE = false;
+			if (token_type(token) == SQUOTE_T)
+				isSQUOTE = true;
+			if (isSQUOTE)
 				cgen->WriteCode(0, "\"");
 			errors += literal();
-			if (isSTRLIT)
+			if (isSQUOTE)
 				cgen->WriteCode(0, "\"");
 			cgen->WriteCode(0, ";\n");
-			isSTRLIT = false;
+			isSQUOTE = false;
 		}
 		errors+=stmt_list();
 
