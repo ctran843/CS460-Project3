@@ -297,11 +297,11 @@ int SyntacticalAnalyzer::stmt_list ()
 			bool isSQUOTE = false;
 			if (token_type(token) == SQUOTE_T)
 				isSQUOTE = true;
-			if (isSQUOTE)
-				cgen->WriteCode(0, "\"");
+			//if (isSQUOTE)
+				//cgen->WriteCode(0, "\"");
 			errors += literal();
-			if (isSQUOTE)
-				cgen->WriteCode(0, "\"");
+			//if (isSQUOTE)
+				//cgen->WriteCode(0, "\"");
 			cgen->WriteCode(0, ";\n");
 			isSQUOTE = false;
 		}
@@ -358,11 +358,11 @@ int SyntacticalAnalyzer::stmt ()
 		bool isSQUOTE = false;
 		if (token_type(token) == SQUOTE_T)
 			isSQUOTE = true;
-		if (isSQUOTE)
-			cgen->WriteCode(0, "\"");
+		//if (isSQUOTE)
+			//cgen->WriteCode(0, "\"");
 		errors += literal();
-		if (isSQUOTE)
-			cgen->WriteCode(0, "\"");
+		//if (isSQUOTE)
+			//cgen->WriteCode(0, "\"");
 		cgen->WriteCode(0, ";\n");
 		isSQUOTE = false;
 	}
@@ -540,11 +540,11 @@ int SyntacticalAnalyzer::else_part ()
 			bool isSQUOTE = false;
 			if (token_type(token) == SQUOTE_T)
 				isSQUOTE = true;
-			if (isSQUOTE)
-				cgen->WriteCode(0, "\"");
+			//if (isSQUOTE)
+				//cgen->WriteCode(0, "\"");
 			errors += literal();
-			if (isSQUOTE)
-				cgen->WriteCode(0, "\"");
+			//if (isSQUOTE)
+				//cgen->WriteCode(0, "\"");
 			cgen->WriteCode(0, ";\n");
 			isSQUOTE = false;
 		}
@@ -893,7 +893,7 @@ int SyntacticalAnalyzer::any_other_token ()
 
 	}else if (token_type(token) == DISPLAY_T){
 		p2_file << "Using rule 56.\n";
-		cgen->WriteCode(0, lex->GetLexeme());
+		cgen->WriteCode(0, "cout << ");
 		token = lex->GetToken();
 
 	}else if (token_type(token) == NEWLINE_T){
