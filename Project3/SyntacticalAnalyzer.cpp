@@ -353,7 +353,7 @@ int SyntacticalAnalyzer::stmt ()
 		}
 	}
 	else if(token_type(token) == NUMLIT_T || token_type(token) == STRLIT_T || token_type(token) == SQUOTE_T){
-		cgen->WriteCode(0, "__RetVal = ");
+		//cgen->WriteCode(0, "__RetVal = ");
 		p2_file<<"Using rule 7.\n";
 		bool isSTRLIT = false;
 		if (token_type(token) == STRLIT_T)
@@ -513,7 +513,8 @@ int SyntacticalAnalyzer::else_part ()
 		p2_file << "Using rule 18.\n";
 		// don't want to get next token because token is already at the first of stmt token = lex->GetToken();
 		if(token_type(token) == IDENT_T){
-			cgen->WriteCode(0, "__RetVal = ");
+			// this cgen messes up test case 3
+			//cgen->WriteCode(0, "__RetVal = ");
 			cgen->WriteCode(0, lex->GetLexeme());
 			cgen->WriteCode(0, ";");
 			p2_file<<"Using rule 8.\n";
