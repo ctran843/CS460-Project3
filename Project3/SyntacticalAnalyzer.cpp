@@ -157,7 +157,7 @@ int SyntacticalAnalyzer::define ()
 {
 	p2_file<<"Using rule 4.\n";
 	set<token_type> firsts = {DEFINE_T};
-  set<token_type>follows={LPAREN_T};
+  	set<token_type>follows={LPAREN_T};
 	int errors = 0;
 
 	//Look for first LPAREN_T
@@ -310,7 +310,7 @@ int SyntacticalAnalyzer::stmt ()
 	int errors = 0;
 	token = lex->GetToken();
 	set<token_type> firsts = {IDENT_T, LPAREN_T, NUMLIT_T, STRLIT_T, SQUOTE_T};
-  set<token_type>follows={LPAREN_T};
+  	set<token_type>follows={LPAREN_T};
 	while(firsts.find(token_type(token)) == firsts.end()){
 		if(token_type(token) == EOF_T){
 			errors++;
@@ -367,6 +367,11 @@ int SyntacticalAnalyzer::literal ()
 	int errors = 0;
 	set<token_type> firsts = {NUMLIT_T, STRLIT_T,  SQUOTE_T};
 	set<token_type>follows={RPAREN_T, IDENT_T, LPAREN_T, NUMLIT_T, STRLIT_T, SQUOTE_T, LAMBDA};
+	if(token_type(token) == EOF_T){
+		errors++;
+		return errors;
+	}
+
 	if(token_type(token) == NUMLIT_T){
 		cgen->WriteCode(0,"Object(" + lex->GetLexeme() +")");
 		p2_file<<"Using rule 10.\n";
@@ -448,8 +453,12 @@ int SyntacticalAnalyzer::param_list ()
 {
 	int errors = 0;
 	set<token_type> firsts = {IDENT_T, RPAREN_T};
-  set<token_type> follows = {RPAREN_T};
+  	set<token_type> follows = {RPAREN_T};
 	token = lex->GetToken();
+	if(token_type(token) == EOF_T){
+		errors++;
+		return errors;
+	}
 
 	if (token_type(token) == IDENT_T)
 	{
@@ -472,6 +481,10 @@ int SyntacticalAnalyzer::else_part ()
 	token = lex->GetToken();
 	set<token_type> firsts = {IDENT_T, LPAREN_T, NUMLIT_T, STRLIT_T, SQUOTE_T, RPAREN_T};
 	set<token_type> follows = {RPAREN_T};
+	if(token_type(token) == EOF_T){
+		errors++;
+		return errors;
+	}
 
 	if(token_type(token) == IDENT_T || token_type(token) == LPAREN_T || token_type(token) == NUMLIT_T || token_type(token) == STRLIT_T || token_type(token) == SQUOTE_T){
 		p2_file << "Using rule 18.\n";
