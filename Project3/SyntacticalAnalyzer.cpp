@@ -232,8 +232,10 @@ int SyntacticalAnalyzer::define ()
 
 	//in a good program, stmt_list will have return RPAREN_T
 	while(token_type(token) != RPAREN_T){
+		cout << token;
 		if(token_type(token)== EOF_T){
 			errors++;
+			cout << "error in define EOF reached";
 			lex->ReportError("EOF reached before ending RPAREN_T in define().\n");
 			return errors;
 		}
@@ -241,6 +243,7 @@ int SyntacticalAnalyzer::define ()
 		lex->ReportError("RPAREN_T Expected. "+lex->GetTokenName(token)+" found instead.\n");
 		token = lex->GetToken();
 	}
+	cout << isMain;
 	if(isMain){
 		cgen->WriteCode(0, "return 0;\n}\n");
 	}else{
@@ -256,7 +259,7 @@ int SyntacticalAnalyzer::stmt_list ()
 	cout << "in stmt_list" << endl;
 
 	int errors = 0;
-	set<token_type> firsts = {IDENT_T, LPAREN_T, NUMLIT_T, STRLIT_T, SQUOTE_T};
+	set<token_type> firsts = {/*RPAREN_T,*/  IDENT_T, LPAREN_T, NUMLIT_T, STRLIT_T, SQUOTE_T};
 	token=lex->GetToken();
 
 	//if it's not the start of a statement, stmt_list is empty.
@@ -437,36 +440,29 @@ int SyntacticalAnalyzer::more_tokens ()
 
 	int errors = 0;
 
-	set<token_type> firsts = {IF_T, COND_T, LISTOP1_T, LISTOP2_T,
-				  AND_T, OR_T, NOT_T, NUMBERP_T,
-				  LISTP_T, ZEROP_T, NULLP_T,
-				  STRINGP_T, PLUS_T, MINUS_T, DIV_T,
-				  MULT_T, MODULO_T, ROUND_T,
-				  EQUALTO_T, GT_T, LT_T, GTE_T,
-				  LTE_T, IDENT_T, DISPLAY_T, NEWLINE_T};
+	set<token_type> firsts = {LPAREN_T, IDENT_T, NUMLIT_T, STRLIT_T, LISTOP2_T, IF_T, DISPLAY_T, NEWLINE_T, LISTOP1_T, AND_T, OR_T, NOT_T, DEFINE_T, NUMBERP_T, LISTP_T, ZEROP_T, NULLP_T, STRINGP_T, PLUS_T, MINUS_T, DIV_T, MULT_T, MODULO_T, ROUND_T, EQUALTO_T, GT_T, LT_T, GTE_T, LTE_T, SQUOTE_T, COND_T, ELSE_T, RPAREN_T, LPAREN_T};
 	set<token_type> follows = {RPAREN_T, IDENT_T, LPAREN_T, NUMLIT_T,
 				   STRLIT_T, SQUOTE_T};
-	
+
+	while (firsts.find(token_type(token)) == firsts.end()){
+        errors++;
+        if (token_type(token) == EOF_T)
+        	return errors;
+	cout << "t_t(): " << token_type(token) << "token: " << token << endl;
+
+        token = lex->GetToken();
+    }
 	if (token_type(token) == RPAREN_T)
 	{
 	    p2_file<<"Using rule 15.\n";
 	    //token = lex->GetToken();
-	    return errors;
-	}
-	while (firsts.find(token) == firsts.end()){
-        errors++;
-        if (token_type(token) == EOF_T)
-        	return errors;
-	cout << token;
-        token = lex->GetToken();
-    }
-
+	}else{
 	    p2_file<<"Using rule 14.\n";
 		cgen->WriteCode(0, " ");
 	    errors += any_other_token();
 
 	    errors += more_tokens();
-
+	}
 	return errors;
 }
 
@@ -877,6 +873,7 @@ int SyntacticalAnalyzer::any_other_token ()
 		token = lex->GetToken();
 	}else if (token_type(token) == NUMLIT_T){
 		p2_file << "Using rule 52.\n";
+		cout << token << "is a number";
 		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();
 	}else if (token_type(token) == STRLIT_T){
@@ -931,7 +928,6 @@ int SyntacticalAnalyzer::any_other_token ()
 		token = lex->GetToken();
 
 	}else if (token_type(token) == NUMBERP_T){
-		cout << token << " is a number";
 		p2_file << "Using rule 63.\n";
 		cgen->WriteCode(0, lex->GetLexeme());
 		token = lex->GetToken();

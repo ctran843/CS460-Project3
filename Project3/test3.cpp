@@ -7,4 +7,4 @@ using namespace std;
 int main ()
 {
 Object __RetVal;
-cout << Object("( main)");
+cout << Object("( 1 2 3)");
