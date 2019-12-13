@@ -22,6 +22,7 @@ class SyntacticalAnalyzer
 	SyntacticalAnalyzer (char * filename);
 	~SyntacticalAnalyzer ();
     private:
+	int tabs;
     ofstream p2_file;
 	LexicalAnalyzer * lex;
 	CodeGen * cgen;
@@ -40,6 +41,8 @@ class SyntacticalAnalyzer
 	int stmt_pair_body ();
 	int action ();
 	int any_other_token ();
+	bool isListop1;
+	bool isListop2;
 };
 
 #endif

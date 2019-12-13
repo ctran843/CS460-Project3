@@ -20,6 +20,8 @@ using namespace std;
 
 SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
 {
+	isListop1 = false;
+	isListop2 = false;
 	string out_file = filename;
 	out_file.erase(out_file.length()-2);
 	out_file += "p2";
@@ -107,7 +109,7 @@ int SyntacticalAnalyzer::more_defines()
 	int errors = 0;
 	set<token_type> firsts = {IDENT_T, DEFINE_T};
   	set<token_type>follows={EOF_T};
-
+//v1 code
 	token = lex->GetToken();
 	while(firsts.find(token_type(token)) == firsts.end()){
 	    errors++;
@@ -151,7 +153,42 @@ int SyntacticalAnalyzer::more_defines()
 		}
   }
 
-	return errors;
+
+//v2 code
+/*
+	if (token == IDENT_T)
+	{
+		p2_file << "Using Rule 3" << endl;
+
+		token = lex->GetToken();
+		errors += stmt_list();
+
+		if(token == RPAREN_T)
+		{
+			token = lex->GetToken();
+		}else{
+			errors++;
+			lex->ReportError("')' expected");
+		}
+	}else if(token == DEFINE_T){
+		p2_file << "Using Rule 2" << endl;
+		errors += define();
+
+		if(token != LPAREN_T){
+			errors++;
+			lex->ReportError("'(' expected");
+		}
+		else
+			token = lex->GetToken();
+		errors += more_defines();
+	}
+	else
+	{
+		errors++;
+		lex->ReportError("'" + lex->GetLexeme() + "' Unexpected");
+	}
+*/
+	return errors;		
 }
 
 //Token not advanced into next nonterminal after this function. Token will
@@ -229,9 +266,9 @@ int SyntacticalAnalyzer::define ()
 	else{
 		lex->ReportError("EOF reached before ending RPAREN_T in define().\n");
 	}
-
+	
 	//in a good program, stmt_list will have return RPAREN_T
-	while(token_type(token) != RPAREN_T){
+	/*/while(token_type(token) != RPAREN_T){
 		cout << token;
 		if(token_type(token)== EOF_T){
 			errors++;
@@ -242,7 +279,7 @@ int SyntacticalAnalyzer::define ()
 		errors++;
 		lex->ReportError("RPAREN_T Expected. "+lex->GetTokenName(token)+" found instead.\n");
 		token = lex->GetToken();
-	}
+	}*/
 	cout << isMain;
 	if(isMain){
 		cgen->WriteCode(0, "return 0;\n}\n");
@@ -257,11 +294,12 @@ int SyntacticalAnalyzer::define ()
 int SyntacticalAnalyzer::stmt_list ()
 {
 	cout << "in stmt_list" << endl;
-
+	cout << token;
 	int errors = 0;
-	set<token_type> firsts = {/*RPAREN_T,*/  IDENT_T, LPAREN_T, NUMLIT_T, STRLIT_T, SQUOTE_T};
+	set<token_type> firsts = {RPAREN_T, IDENT_T, LPAREN_T, NUMLIT_T, STRLIT_T, SQUOTE_T};
 	token=lex->GetToken();
-
+	
+	cout << "token after prefetch in stmt_list: " << token << endl;
 	//if it's not the start of a statement, stmt_list is empty.
 	if(firsts.find(token_type(token)) == firsts.end()){
 		p2_file<<"Using rule 6.\n";
@@ -305,7 +343,9 @@ int SyntacticalAnalyzer::stmt_list ()
 			errors += literal();
 			//if (isSQUOTE)
 				//cgen->WriteCode(0, "\"");
-			cgen->WriteCode(0, ";\n");
+			cout << "stmt_list islistop1: " << isListop1 << endl;
+			if(!isListop1 && !isListop2)
+				cgen->WriteCode(0, ";\n");
 			isSQUOTE = false;
 		}
 		errors+=stmt_list();
@@ -323,6 +363,7 @@ int SyntacticalAnalyzer::stmt ()
 
 	int errors = 0;
 	token = lex->GetToken();
+	cout << "stmt token : " << token << endl;
 	set<token_type> firsts = {IDENT_T, LPAREN_T, NUMLIT_T, STRLIT_T, SQUOTE_T};
   	set<token_type>follows={LPAREN_T};
 	while(firsts.find(token_type(token)) == firsts.end()){
@@ -366,7 +407,9 @@ int SyntacticalAnalyzer::stmt ()
 		errors += literal();
 		//if (isSQUOTE)
 			//cgen->WriteCode(0, "\"");
-		cgen->WriteCode(0, ";\n");
+		cout << "test in stmt islistop1: " << isListop1 << endl;
+		if(!isListop1 && !isListop2)
+			cgen->WriteCode(0, ";\n");
 		isSQUOTE = false;
 	}
 
@@ -463,6 +506,7 @@ int SyntacticalAnalyzer::more_tokens ()
 
 	    errors += more_tokens();
 	}
+	cout << "token before leaving more_tokens: " << token << endl;
 	return errors;
 }
 
@@ -542,7 +586,9 @@ int SyntacticalAnalyzer::else_part ()
 			errors += literal();
 			//if (isSQUOTE)
 				//cgen->WriteCode(0, "\"");
-			cgen->WriteCode(0, ";\n");
+			cout << "test: " << isListop1 << endl;
+			if(!isListop1 && !isListop2)
+				cgen->WriteCode(0, ";\n");
 			isSQUOTE = false;
 		}
 		errors+=stmt_list();
@@ -681,6 +727,7 @@ int SyntacticalAnalyzer::action ()
 
 		else if (token_type(token) == LISTOP1_T)
 		{
+			isListop1 = true; 
 			cout << lex->GetLexeme();
 			p2_file<<"Using rule 26.\n";
 			cgen->WriteCode(0, "listop (");
@@ -688,18 +735,23 @@ int SyntacticalAnalyzer::action ()
 			cgen->WriteCode(0, lex->GetLexeme());
 			cgen->WriteCode(0, "\", ");
 			errors+= stmt();
-			cgen->WriteCode(0, ")");
+			cgen->WriteCode(0, ");\n");
+			isListop1 = false;
 		}
 
 		else if (token_type(token) == LISTOP2_T)
 		{
-			cgen->WriteCode(0, "__RetVal = cons (");
+			isListop2 = true;
+			cgen->WriteCode(0, "listop ( \"");
+			cgen->WriteCode(0, lex->GetLexeme());
+			cgen->WriteCode(0, ", ");
 			p2_file<<"Using rule 27.\n";
 			errors+= stmt();
-			cgen->WriteCode(0, ",\n");
-			cgen->WriteCode(1, "");
+			cout << "Listop2 after first stmt call token: " << token << endl;
+			cgen->WriteCode(0, ", ");
 			errors+= stmt();
-			cgen->WriteCode(0, ")");
+			cgen->WriteCode(0, ");\n");
+			isListop2 = false;
 		}
 
 		else if (token_type(token) == AND_T)
@@ -861,7 +913,7 @@ int SyntacticalAnalyzer::any_other_token ()
 		errors += more_tokens();
 		if(token_type(token) == RPAREN_T){
 			cgen->WriteCode(0, ")");
-			token = lex->GetToken();
+			//token = lex->GetToken();
 		}else{
 			errors++;
 			lex->ReportError("Expected RPAREN_T");
@@ -878,7 +930,9 @@ int SyntacticalAnalyzer::any_other_token ()
 		token = lex->GetToken();
 	}else if (token_type(token) == STRLIT_T){
 		p2_file << "Using rule 53.\n";
-		cgen->WriteCode(0, lex->GetLexeme());
+		string mystr = lex->GetLexeme();
+		mystr = mystr.substr(1,mystr.size()-2);
+		cgen->WriteCode(0, mystr);
 		token = lex->GetToken();
 
 	}else if (token_type(token) == LISTOP2_T){

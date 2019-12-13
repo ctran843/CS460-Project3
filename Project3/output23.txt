@@ -1,0 +1,61 @@
+Input file: ../P3Tests/P3-23.ss
+in program
+in define
+in param_list
+in stmt
+stmt token : 31
+in action
+in stmt
+stmt token : 31
+in action
+in stmt
+stmt token : 33
+in literal
+in quoted_lit
+in any_other_token
+in any_other_token
+in more_tokens
+in any_other_token
+2is a numberin more_tokens
+in any_other_token
+2is a numberin more_tokens
+token before leaving more_tokens: 32
+token before leaving more_tokens: 32
+token before leaving more_tokens: 32
+test in stmt islistop1: 0
+Listop2 after first stmt call token: 32
+in stmt
+stmt token : 33
+in literal
+in quoted_lit
+in any_other_token
+in any_other_token
+in more_tokens
+in any_other_token
+2is a numberin more_tokens
+in any_other_token
+2is a numberin more_tokens
+in any_other_token
+2is a numberin more_tokens
+token before leaving more_tokens: 32
+token before leaving more_tokens: 32
+token before leaving more_tokens: 32
+token before leaving more_tokens: 32
+test in stmt islistop1: 0
+in stmt_list
+32token after prefetch in stmt_list: 32
+in stmt_list
+32token after prefetch in stmt_list: 32
+in stmt_list
+32token after prefetch in stmt_list: 31
+in action
+in stmt_list
+32token after prefetch in stmt_list: 32
+in stmt_list
+32token after prefetch in stmt_list: 31
+in action
+in stmt_list
+1token after prefetch in stmt_list: 32
+in stmt_list
+32token after prefetch in stmt_list: 35
+13 errors found in input file
