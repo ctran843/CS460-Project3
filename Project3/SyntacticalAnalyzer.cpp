@@ -644,7 +644,7 @@ int SyntacticalAnalyzer::action ()
 		isListop2 = true;
 		cgen->WriteCode(0, "listop ( \"");
 		cgen->WriteCode(0, lex->GetLexeme());
-		cgen->WriteCode(0, ", ");
+		cgen->WriteCode(0, "\", ");
 		p2_file<<"Using rule 27.\n";
 		errors+= stmt();
 		cgen->WriteCode(0, ", ");
