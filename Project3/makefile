@@ -20,17 +20,17 @@ clean :
 	rm [SP]*.o P2.out *.gch
 
 submit : Project2.cpp LexicalAnalyzer.h SyntacticalAnalyzer.h SyntacticalAnalyzer.cpp CodeGenerator.cpp CodeGenerator.h Object.cpp Object.h makefile README.txt
-	rm -rf Team#27P3
-	mkdir Team#27P3
-	cp Project2.cpp Team#27P3
-	cp SyntacticalAnalyzer.h Team#27P3
-	cp SyntacticalAnalyzer.cpp Team#27P3
-	cp LexicalAnalyzer.h Team#27P3
-	cp CodeGenerator.h Team#27P3
-	cp CodeGenerator.cpp Team#27P3
-	cp Object.h Team#27P3
-	cp Object.cpp Team#27P3
-	cp makefile Team#27P3
-	cp README.txt Team#27P3
-	tar cfvz Team#27P3.tgz Team#27P3
-	cp Team#27P3.tgz ~tiawatts/cs460drop
+	rm -rf Team27P3
+	mkdir Team27P3
+	cp Project2.cpp Team27P3
+	cp SyntacticalAnalyzer.h Team27P3
+	cp SyntacticalAnalyzer.cpp Team27P3
+	cp LexicalAnalyzer.h Team27P3
+	cp CodeGenerator.h Team27P3
+	cp CodeGenerator.cpp Team27P3
+	cp Object.h Team27P3
+	cp Object.cpp Team27P3
+	cp makefile Team27P3
+	cp README.txt Team27P3
+	tar cfvz Team27P3.tgz Team27P3
+	cp Team27P3.tgz ~tiawatts/cs460drop
