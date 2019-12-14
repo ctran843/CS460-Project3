@@ -1,9 +1,9 @@
 /*******************************************************************************
 * File name: Project2.cpp                                                      *
 * Project: CS 460 Project 2 Fall 2019                                          *
-* Author(s): Dr. Watts                                                         *
+* Author(s): Andrew Langwell, Chris Tran, Lizzy Axworthy, Christopher DeGuzman, Original File Provided by Dr. Watts                                                         *
 * Date: Fall 2019                                                              *
-* Description: This file contains the driver program for Project 2.            *
+* Description: This file contains the driver program for Project 2 and Project3.            *
 *******************************************************************************/
 
 #include <cstdlib>

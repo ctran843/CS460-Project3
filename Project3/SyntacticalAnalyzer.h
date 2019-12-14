@@ -3,7 +3,7 @@
 * Project: CS 460 Project 2 Fall 2019                                          *
 * Author(s):                                                                   *
 * Date:                                                                        *
-* Description: This file contains                                              *
+* Description: This file contains the header file for the Syntactical Analyzer.*
 *******************************************************************************/
 
 #ifndef SYN_H

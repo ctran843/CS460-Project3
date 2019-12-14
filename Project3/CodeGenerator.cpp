@@ -1,3 +1,8 @@
+// Project: CS 460 Fall 2019 Project 3
+// File: CodeGenerator.cpp
+// Authors: Modified by Andrew Langwell, Chris Tran, Lizzy Axworthy, Christopher DeGuzman, Origial File Provided By Dr. Watts
+// Desciption: Code generator cpp file for Project 3.
+
 #include <iostream>
 #include <fstream>
 #include "CodeGenerator.h"

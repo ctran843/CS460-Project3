@@ -27,7 +27,7 @@ submit : Project2.cpp LexicalAnalyzer.h SyntacticalAnalyzer.h SyntacticalAnalyze
 	cp SyntacticalAnalyzer.cpp Team#27P3
 	cp LexicalAnalyzer.h Team#27P3
 	cp CodeGenerator.h Team#27P3
-	cp CodeGenerator .cpp Team#27P3
+	cp CodeGenerator.cpp Team#27P3
 	cp Object.h Team#27P3
 	cp Object.cpp Team#27P3
 	cp makefile Team#27P3
