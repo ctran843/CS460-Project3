@@ -1,0 +1,6 @@
+SSU
+Hello World
+The car of '(1 2 3) is 1
+hello 12.3 append if display newline car define number? list? zero? null? string?
++ - / * modulo round = > < >= < = cond else
+1 'ac 2 '(and or not)

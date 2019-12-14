@@ -1,0 +1,12 @@
+(define (main)
+	(display (modulo 6 3))
+	(newline)
+	(display (modulo 14 8))
+	(newline)
+	(display (round 6.3))
+	(newline)
+	(display (round 14.8))
+	(newline)
+)
+
+(main)

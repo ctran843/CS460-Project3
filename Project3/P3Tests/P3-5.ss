@@ -1,0 +1,10 @@
+(define (main)
+	(display 5)
+	(newline)
+	(display 5.123)
+	(newline)
+	(display -5)
+	(newline)
+)
+
+(main)

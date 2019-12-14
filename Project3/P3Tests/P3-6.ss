@@ -1,0 +1,10 @@
+(define (main)
+	(display 'a)
+	(newline)
+	(display 'abc)
+	(newline)
+	(display '5)
+	(newline)
+)
+
+(main)

@@ -1,0 +1,20 @@
+(define (sum L)
+	(if (null? L)
+		0
+		(if (not (number? (car L)))
+			(sum (cdr L))
+			(+ (car L) (sum (cdr L)))
+		)
+	)
+)
+
+(define (main)
+	(display (sum '(3 5)))
+	(newline)
+	(display (sum '(13 3 4 7 12 5)))
+	(newline)
+	(display (sum '(13 a 4 b 12 5)))
+	(newline)
+)
+
+(main)

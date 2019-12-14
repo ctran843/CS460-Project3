@@ -1,0 +1,12 @@
+#!/bin/tcsh
+
+rm a.out
+guile < P3-$1.ss
+P3.out P3-$1.ss
+g++ P3-$1.cpp Object.cpp
+./a.out > P3-$1.output
+echo ""
+cat P3-$1.output
+echo ""
+echo "differences:"
+diff P3-$1.output P3-$1.exp

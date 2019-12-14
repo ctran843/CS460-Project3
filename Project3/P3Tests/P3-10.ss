@@ -1,0 +1,10 @@
+(define (main)
+	(display '(hello 12.3 append if display newline car define number? list? zero? null? string?))
+	(newline)
+	(display '(+ - / * modulo round = > < >= <= cond else))
+	(newline)
+	(display '(1 "Hello world" 2 'ac 3 '(and or not)))
+	(newline)
+)
+
+(main)
